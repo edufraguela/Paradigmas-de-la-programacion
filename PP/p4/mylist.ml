@@ -1,0 +1,129 @@
+let hd l = match l with
+| h::_ -> h
+| [] -> raise (Failure "hd");;
+(*val hd : 'a list -> 'a = <fun>*)
+
+let tl l = match l with
+| _::t-> t
+| [] -> raise (Failure "tl");;
+(* val tl : 'a list -> 'a list = <fun>*)
+
+let rec length = function
+[] -> 0
+| _::t -> 1 + length t;;
+(*val length : 'a list -> int = <fun>*)
+
+let compare_lengths = function l1 -> function l2 ->
+        if length l1 = length l2 then 0
+      else 1;;
+(*val compare_lengths : 'a list -> 'b list -> int = <fun>*)
+
+let rec nth l n =  
+if n=0 then hd l
+else nth (tl l)(n-1);;
+(*val nth : 'a list -> int -> 'a = <fun>*)
+
+let rec append l1 l2 = 
+if l1=[] then l2
+else (hd l1)::(append(tl l1) l2);;
+(*val append : 'a list -> 'a list -> 'a list = <fun>*)
+
+let rec init len f = match len, f with
+ 0, f -> []
+ |len, f -> if (len > 0) then (init (len - 1) f) @ [f len]
+            else raise(Failure "init");;
+(*val init : int -> (int -> 'a) -> 'a list = <fun>*)
+
+let rec rev = function
+  [] -> []
+| h::t -> append (rev t) [h];;
+(*val rev : 'a list -> 'a list = <fun>*)
+
+let rev_append l1 l2 =
+if l1=[] then []
+else append (rev l1) l2;;
+(*val rev_append : 'a list -> 'a list -> 'a list = <fun>*)
+
+let rec concat = function
+  [] -> []
+| h::t -> append h (concat t);;
+(*val concat : 'a list list -> 'a list = <fun>*)
+
+let flatten = concat;;
+(*val flatten : 'a list list -> 'a list = <fun>*)
+
+let rec map f = function
+  [] -> []
+| h::t -> (f h) :: (map f t);;
+(*val map : ('a -> 'b) -> 'a list -> 'b list = <fun>*)
+
+let rev_map f = function
+        [] -> []
+        |h::t -> rev ((f h)::map f t);;
+(*val rev_map : ('a -> 'b) -> 'a list -> 'b list = <fun>*)
+
+let rec map2 f l1 = function
+  [] -> [] 
+| h::t -> (f (hd l1) h) :: map2 f (tl l1) t;;
+(*val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list = <fun>*)
+
+let rec fold_left f a = function
+  [] -> a
+| h::t -> fold_left f (f a h) t;;
+(*val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a = <fun>*)
+
+let rec fold_right f l a =
+  match l with
+   [] -> a
+ | h::t -> f h (fold_right f t a);;
+(*val fold_right : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b = <fun>*)
+	
+let rec find p = function
+  [] -> raise Not_found
+| h::t -> if p h then h else find p t;;		
+(*val find : ('a -> bool) -> 'a list -> 'a = <fun>*)
+
+let rec for_all p = function
+  [] -> true
+| h::t -> (p h) && (for_all p t);;
+(*val for_all : ('a -> bool) -> 'a list -> bool = <fun>*)
+
+let rec exists p = function
+  [] -> false
+| h::t -> (p h) || (exists p t);;
+(*val exists : ('a -> bool) -> 'a list -> bool = <fun>*)
+
+let rec mem p = function
+  [] -> false
+| h::t -> if (p = h) then true
+			else (mem p t);;
+(*val mem : 'a -> 'a list -> bool = <fun>*)
+
+let rec filter p = function
+  [] -> []
+| h::t -> if (p h) then h::(filter p t)
+			else (filter p t);;
+(*val filter : ('a -> bool) -> 'a list -> 'a list = <fun>*)
+
+let find_all = filter;;
+(*val find_all : ('a -> bool) -> 'a list -> 'a list = <fun>*)
+
+let rec partition p = function
+  [] -> ([],[])
+| h::t -> let (si,no) = partition p t
+			in if (p h) then (h::si,no)
+				else (si,h::no);;
+(*val partition : ('a -> bool) -> 'a list -> 'a list * 'a list = <fun>*)
+
+let rec split = function
+  [] -> ([],[])
+| (h1,h2)::t -> let t1,t2 = split t in
+		h1::t1,h2::t2;;
+(*val split : ('a * 'b) list -> 'a list * 'b list = <fun>*)
+
+let rec combine l1 l2 =
+ match (l1,l2) with
+  [], [] -> []
+  | h1::t1, h2::t2 -> (h1,h2) :: (combine (t1) (t2))
+  | _ -> raise (Invalid_argument "combine");;
+(*val combine : 'a list -> 'b list -> ('a * 'b) list = <fun>*)
