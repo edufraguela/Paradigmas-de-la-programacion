@@ -1,2 +1,2 @@
-# Algoritmos
-Prácticas de álgoritmos en C y ejercicios
+# Paradigmas de la programación
+Prácticas de paradigmas de la programación.
